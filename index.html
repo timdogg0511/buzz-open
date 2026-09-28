@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Buzz</title>
+<style>
+  :root { --bg: #f7f7f5; --fg: #1d1d1b; --muted: #5f5f5a; --btn: #1d1d1b; --btn-fg: #fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #161615; --fg: #f2f2ef; --muted: #a8a8a2; --btn: #f2f2ef; --btn-fg: #161615; } }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--fg);
+         font: 17px/1.5 -apple-system, "Segoe UI", system-ui, sans-serif; padding: 0 16px; }
+  main { max-width: 360px; text-align: center; }
+  a.btn { display: block; margin: 24px 0 12px; padding: 16px; border-radius: 12px; background: var(--btn);
+          color: var(--btn-fg); text-decoration: none; font-weight: 600; font-size: 19px; }
+  p { color: var(--muted); margin: 8px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1 style="font-size:22px;margin:0">Opening Buzz…</h1>
+  <a class="btn" id="open" href="buzz://">Open Buzz</a>
+  <p id="hint">If nothing happens, tap the button. Buzz must be installed on this device.</p>
+</main>
+<script>
+  // Links from the Buzz alert email: ?c=<channel uuid>&m=<message id>[&t=<thread root id>].
+  // Builds Buzz's own deep link (buzz://message?channel=..&id=..[&thread=..]), which both the
+  // phone and desktop apps open at that message. With no ids it just opens the app.
+  var q = new URLSearchParams(location.search), hex = /^[0-9a-f-]{8,64}$/i;
+  var c = q.get('c'), m = q.get('m'), t = q.get('t');
+  var link = 'buzz://';
+  if (c && m && hex.test(c) && hex.test(m)) {
+    link = 'buzz://message?channel=' + encodeURIComponent(c) + '&id=' + encodeURIComponent(m) +
+           (t && hex.test(t) ? '&thread=' + encodeURIComponent(t) : '');
+    document.getElementById('open').textContent = 'Open this message in Buzz';
+  }
+  document.getElementById('open').href = link;
+  location.href = link;
+</script>
+</body>
+</html>
